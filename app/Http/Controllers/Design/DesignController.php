@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Design;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DesignResource;
 use App\Models\Design;
+use App\Repositories\Contracts\IDesign;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -12,10 +14,27 @@ use Illuminate\Support\Str;
 
 class DesignController extends Controller
 {
-    public function update(Request $request, $id)
+    protected $design;
+
+    public function __construct(IDesign $design)
+    {
+        $this->design = $design;
+    }
+
+    public function index(): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $designs = $this->design->all();
+        return DesignResource::collection($designs);
+    }
+
+
+    /**
+     * @throws AuthorizationException
+     */
+    public function update($id, Request $request): DesignResource
     {
 
-        $design = Design::find($id);
+        $design = $this->design->find($id);
         $this->authorize('update', $design);
 
         $request->validate([
@@ -25,7 +44,7 @@ class DesignController extends Controller
         ]);
 
 
-        $design->update([
+        $this->design->update($id,[
             'title' => $request->title,
             'description' => $request->description,
             'slug' => Str::slug($request->title),
@@ -37,11 +56,13 @@ class DesignController extends Controller
 
     }
 
-    public function destroy($id)
+    /**
+     * @throws AuthorizationException
+     */
+    public function destroy($id): \Illuminate\Http\JsonResponse
     {
-        $design = Design::findOrFail($id);
+        $design = $this->design->find($id);
         $this->authorize('delete', $design);
-
 
 
         foreach (['Thumbnail', 'Original', 'Large'] as $size) {
@@ -50,7 +71,7 @@ class DesignController extends Controller
 
             }
         }
-        $design->delete();
+        $this->design->delete($id);
         return response()->json(['message' => 'Design deleted']);
     }
 }

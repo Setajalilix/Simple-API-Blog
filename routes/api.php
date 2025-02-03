@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\registerController;
 use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\User\MeController;
+use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Design\UploadController;
 use App\Http\Controllers\Design\DesignController;
 
@@ -29,10 +30,13 @@ Route::get('/', function () {
     return response()->json(['message' => 'hello'], 200);
 });
 
-Route::get('me', [MeController::class, 'getMe']);
+
+Route::get('users', [UserController::class, 'index']);
+Route::get('designs', [DesignController::class, 'index']);
 
 Route::group(['middleware' => 'auth:api'], function () {
 
+    Route::get('me', [MeController::class, 'getMe']);
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::prefix('setting')->group(function () {
@@ -40,7 +44,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::put('UpdatePassword', [MeController::class, 'UpdatePassword']);
     });
 
-    Route::prefix('Designs')->group(function () {
+    Route::prefix('designs')->group(function () {
         Route::post('/', [UploadController::class, 'Upload']);
         Route::put('update/{id}', [DesignController::class, 'update']);
         Route::delete('delete/{id}', [DesignController::class, 'destroy']);
@@ -57,7 +61,6 @@ Route::group(['middleware' => 'guest:api'], function () {
     });
 
     Route::post('register', [registerController::class, 'register']);
-
 
 
     Route::post('login', [LoginController::class, 'login'])->name('login');
