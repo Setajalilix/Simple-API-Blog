@@ -9,6 +9,7 @@ use App\Http\Controllers\User\MeController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Design\UploadController;
 use App\Http\Controllers\Design\DesignController;
+use \App\Http\Controllers\Design\CommentController;
 
 
 /*
@@ -49,6 +50,13 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::put('update/{id}', [DesignController::class, 'update']);
         Route::delete('delete/{id}', [DesignController::class, 'destroy']);
 
+
+    });
+
+    Route::prefix('comment')->group(function () {
+        Route::post('{designId}', [CommentController::class, 'store']);
+        Route::put('{id}', [CommentController::class, 'update']);
+        Route::delete('{id}', [CommentController::class, 'destroy']);
     });
 
 });

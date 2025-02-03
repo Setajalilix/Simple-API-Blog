@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Likable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -9,7 +10,7 @@ use Spatie\Tags\HasTags;
 
 class Design extends Model
 {
-    use HasFactory , HasTags;
+    use HasFactory , HasTags , Likable;
 
     protected $fillable = [
         'user_id',
@@ -28,7 +29,10 @@ class Design extends Model
     {
         return $this->belongsTo(User::class);
     }
-
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable')->orderBy('created_at','asc');
+    }
 
     public function getImages(): array
     {

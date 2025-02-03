@@ -3,7 +3,7 @@
 
  interface ICriteria
  {
-     public function criteria(...$args);
+     public function withCriteria(...$args);
 
 
  }

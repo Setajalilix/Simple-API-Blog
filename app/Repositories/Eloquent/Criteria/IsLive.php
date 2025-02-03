@@ -4,7 +4,7 @@ namespace App\Repositories\Eloquent\Criteria;
 
 use App\Repositories\Criteria\ICriterias;
 
-class Is_live implements ICriterias
+class IsLive implements ICriterias
 {
 
     public function apply($model)

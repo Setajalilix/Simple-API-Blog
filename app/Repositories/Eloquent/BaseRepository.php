@@ -17,7 +17,7 @@ class BaseRepository implements IBase,ICriteria
     }
     public function All()
     {
-        return $this->model->all();
+        return $this->model->get();
     }
 
     public function getModel()
@@ -64,7 +64,7 @@ class BaseRepository implements IBase,ICriteria
         return $this->model->findOrFail($id)->delete();
     }
 
-    public function criteria(...$args)
+    public function withCriteria(...$args)
     {
         $criteria = Arr::flatten($args);
         foreach ($criteria as $cri) {
