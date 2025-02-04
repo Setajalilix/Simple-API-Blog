@@ -50,6 +50,9 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::put('update/{id}', [DesignController::class, 'update']);
         Route::delete('delete/{id}', [DesignController::class, 'destroy']);
 
+        Route::post('{designId}', [DesignController::class, 'like']);
+        Route::get('{designId}', [DesignController::class, 'isLikedByUser']);
+
 
     });
 
@@ -58,6 +61,9 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::put('{id}', [CommentController::class, 'update']);
         Route::delete('{id}', [CommentController::class, 'destroy']);
     });
+
+
+
 
 });
 
