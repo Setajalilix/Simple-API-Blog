@@ -14,6 +14,7 @@ class Design extends Model
 
     protected $fillable = [
         'user_id',
+        'team_id',
         'title',
         'description',
         'image',
@@ -28,6 +29,10 @@ class Design extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+    public function Team()
+    {
+        return $this->belongsTo(Team::class);
     }
     public function comments()
     {

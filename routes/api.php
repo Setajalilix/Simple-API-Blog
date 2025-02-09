@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\registerController;
 use App\Http\Controllers\Auth\VerificationController;
@@ -10,6 +9,7 @@ use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Design\UploadController;
 use App\Http\Controllers\Design\DesignController;
 use \App\Http\Controllers\Design\CommentController;
+use \App\Http\Controllers\Team\TeamController;
 
 
 /*
@@ -34,6 +34,8 @@ Route::get('/', function () {
 
 Route::get('users', [UserController::class, 'index']);
 Route::get('designs', [DesignController::class, 'index']);
+Route::get('teams', [TeamController::class, 'index']);
+Route::get('teams/{slug}', [TeamController::class, 'findBySlug']);
 
 Route::group(['middleware' => 'auth:api'], function () {
 
@@ -45,11 +47,11 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::put('UpdatePassword', [MeController::class, 'UpdatePassword']);
     });
 
-    Route::prefix('designs')->group(function () {
+    Route::prefix('design')->group(function () {
         Route::post('/', [UploadController::class, 'Upload']);
         Route::put('update/{id}', [DesignController::class, 'update']);
         Route::delete('delete/{id}', [DesignController::class, 'destroy']);
-
+        //like
         Route::post('{designId}', [DesignController::class, 'like']);
         Route::get('{designId}', [DesignController::class, 'isLikedByUser']);
 
@@ -61,6 +63,15 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::put('{id}', [CommentController::class, 'update']);
         Route::delete('{id}', [CommentController::class, 'destroy']);
     });
+
+    Route::prefix('team')->group(function () {
+        Route::get('/{TeamId}', [TeamController::class, 'findById']);
+        Route::post('myTeam', [TeamController::class, 'fetchUserTeam']);
+        Route::post('/create', [TeamController::class, 'store']);
+        Route::put('{TeamId}', [TeamController::class, 'update']);
+        Route::delete('{TeamId}', [TeamController::class, 'destroy']);
+    });
+
 
 
 

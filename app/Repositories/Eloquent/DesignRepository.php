@@ -8,7 +8,7 @@ use App\Models\Traits;
 
 
 
-class DesignReposiroty extends BaseRepository implements IDesign
+class DesignRepository extends BaseRepository implements IDesign
 {
     public function model(): string
     {

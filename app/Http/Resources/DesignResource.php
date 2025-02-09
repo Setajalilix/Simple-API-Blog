@@ -18,11 +18,12 @@ class DesignResource extends JsonResource
         return [
             'id' => $this->id,
             'user' => new UserResource($this->user),
+            'team' => $this->team ? ['name' => $this->team->name,] :null,
             'title' => $this->title,
             'description' => $this->description,
             'likes'=>$this->likes()->count(),
             'slug' => $this->slug,
-            'is_live' => $this->is_live,
+            'is_alive' => $this->is_live,
             'tag_list' => [
                 'tags' => $this->tags->pluck('name')
             ],

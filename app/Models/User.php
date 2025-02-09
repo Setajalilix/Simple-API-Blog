@@ -52,6 +52,7 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     ];
 
 
+
     /**
      * Send the email verification notification.
      *
@@ -84,6 +85,22 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
     return $this->hasMany(Comment::class);
     }
+
+    public function Teams(){
+        return $this->belongsToMany(Team::class)->withTimestamps();
+    }
+
+
+    public function ownedTeams()
+    {
+    return $this->Teams()->where('owner_id',$this->id);
+    }
+
+    public function isOwnerOfTeam($team)
+    {
+        return $this->Teams()->where('teams.id', $team->id)->where('teams.owner_id',$this->id)->exists();
+    }
+
 
 
 }

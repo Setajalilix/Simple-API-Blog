@@ -45,6 +45,7 @@ class DesignController extends Controller
             'title' => 'required|max:255|unique:designs,title,' . $id,
             'description' => 'required|max:400|min:20',
             'tags' => 'required',
+            'team' => 'required_if:assign_team,true',
         ]);
 
 
@@ -52,7 +53,8 @@ class DesignController extends Controller
             'title' => $request->title,
             'description' => $request->description,
             'slug' => Str::slug($request->title),
-            'is_live' => !$design->upload_successful ? false : $request->is_live,
+            'is_alive' => !$design->upload_successful ? false : $request->is_live,
+            'team_id' =>$request->team
         ]);
         $design->attachTags($request->tags);
         return new DesignResource($design);
