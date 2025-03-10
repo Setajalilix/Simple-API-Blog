@@ -49,12 +49,12 @@ class DesignController extends Controller
         ]);
 
 
-        $this->design->update($id,[
+        $this->design->update($id, [
             'title' => $request->title,
             'description' => $request->description,
             'slug' => Str::slug($request->title),
             'is_alive' => !$design->upload_successful ? false : $request->is_live,
-            'team_id' =>$request->team
+            'team_id' => $request->team
         ]);
         $design->attachTags($request->tags);
         return new DesignResource($design);
@@ -78,18 +78,41 @@ class DesignController extends Controller
             }
         }
         $this->design->delete($id);
-        return response()->json(['message' => 'Design deleted'],200);
+        return response()->json(['message' => 'Design deleted'], 200);
     }
 
     public function like($designId): \Illuminate\Http\JsonResponse
     {
-      $countOfLike = $this->design->like($designId);
-      return response()->json(['message' => $countOfLike],200);
+        $countOfLike = $this->design->like($designId);
+        return response()->json(['message' => $countOfLike], 200);
     }
 
     public function isLikedByUser($designId): \Illuminate\Http\JsonResponse
     {
         $isliked = $this->design->isLikeByUser($designId);
-        return response()->json(['message' => $isliked],200);
+        return response()->json(['message' => $isliked], 200);
+    }
+
+    public function findBySlug($slug)
+    {
+        $design = $this->design->withCriteria([
+            new IsLive(),
+        ])->findWhereFirst('slug', $slug);
+        return new DesignResource($design);
+    }
+
+    public function getForTeam($teamId)
+    {
+        $design = $this->design->withCriteria([
+            new IsLive(),
+        ])->findWhereFirst('team_id', $teamId);
+        return designResource::collection($design);
+    }
+    public function getForUser($userId)
+    {
+        $design = $this->design->withCriteria([
+            new IsLive(),
+        ])->findWhereFirst('user_id', $userId);
+        return designResource::collection($design);
     }
 }

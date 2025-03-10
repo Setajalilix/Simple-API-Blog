@@ -4,8 +4,9 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 
-class UserResource extends JsonResource
+class ChatResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,16 +17,12 @@ class UserResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'username' => $this->username,
-            $this->mergeWhen(auth()->check() && auth()->id()== $this->id, ['email'=>$this->email]),
-            'tagline' => $this->tagline,
-            'about' => $this->about,
-            'designs' =>DesignResource::collection($this->whenLoaded('designs')),
-            'available_to_hire' => $this->available_to_hire,
             'created_dates' => [
                 'created_at_human' => $this->created_at->diffForHumans(),
-            ]
+            ],
+            'is_unread'=>$this->isUnreadForUser(Auth::id()),
+            'latest_message' => new MessageResource($this->latest_message),
+            'participant'=>UserResource::collection($this->participants)
         ];
     }
 }

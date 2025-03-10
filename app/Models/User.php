@@ -52,13 +52,13 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     ];
 
 
-
     /**
      * Send the email verification notification.
      *
      * @return void
      */
-    public function sendEmailVerificationNotification(){
+    public function sendEmailVerificationNotification()
+    {
         $this->notify(new verifyEmail());
     }
 
@@ -79,28 +79,50 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function Designs()
     {
-    return $this->hasMany(Design::class);
-    }
-    public function Comments()
-    {
-    return $this->hasMany(Comment::class);
+        return $this->hasMany(Design::class);
     }
 
-    public function Teams(){
+    public function Comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function Teams()
+    {
         return $this->belongsToMany(Team::class)->withTimestamps();
     }
 
 
     public function ownedTeams()
     {
-    return $this->Teams()->where('owner_id',$this->id);
+        return $this->Teams()->where('owner_id', $this->id);
     }
 
     public function isOwnerOfTeam($team)
     {
-        return $this->Teams()->where('teams.id', $team->id)->where('teams.owner_id',$this->id)->exists();
+        return $this->Teams()->where('teams.id', $team->id)->where('teams.owner_id', $this->id)->exists();
     }
 
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class, 'recipient_email', 'email');
+    }
 
+    public function chats()
+    {
+        return $this->belongsToMany(Chat::class, 'participant');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function getChatWithUser($userId)
+    {
+        $chat = $this->chats()->whereHas('participant', function ($query) use ($userId) {
+            $query->where('user_id', $userId)->first();
+        });
+    }
 
 }

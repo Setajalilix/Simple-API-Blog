@@ -10,6 +10,7 @@ use App\Http\Controllers\Design\UploadController;
 use App\Http\Controllers\Design\DesignController;
 use \App\Http\Controllers\Design\CommentController;
 use \App\Http\Controllers\Team\TeamController;
+use \App\Http\Controllers\Team\InvitationController;
 
 
 /*
@@ -54,6 +55,7 @@ Route::group(['middleware' => 'auth:api'], function () {
         //like
         Route::post('{designId}', [DesignController::class, 'like']);
         Route::get('{designId}', [DesignController::class, 'isLikedByUser']);
+        Route::get('{slug}', [DesignController::class, 'findBySlug']);
 
 
     });
@@ -70,8 +72,23 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('/create', [TeamController::class, 'store']);
         Route::put('{TeamId}', [TeamController::class, 'update']);
         Route::delete('{TeamId}', [TeamController::class, 'destroy']);
+        Route::delete('{TeamId}/users/{UserId}', [TeamController::class, 'removeFromTeam']);
+        Route::get('{TeamId}/designs', [DesignController::class, 'getForTeam']);
     });
 
+    Route::prefix('invitation')->group(function () {
+        Route::post('{teamId}', [InvitationController::class, 'invite']);
+        Route::post('{id}/resend', [InvitationController::class, 'resend']);
+        Route::post('{id}/respond', [InvitationController::class, 'respond']);
+        Route::delete('{id}', [InvitationController::class, 'destroy']);
+
+    });
+
+    Route::prefix('user')->group(function () {
+        Route::get('{UserId}/designs', [DesignController::class, 'getForUser']);
+        Route::get('{Username}', [UserController::class, 'findByUsername']);
+
+    });
 
 
 
